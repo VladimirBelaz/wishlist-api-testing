@@ -10,14 +10,14 @@
 *   **SoapUI** — для дополнительной проверки и отладки (проект прилагается).
 
 ## 3. Структура репозитория
-'''
+```
 wishlist-api-tests/
 ├── README.md # Этот файл: тест-план, инструкции и отчет
 ├── postman/
 │ └── Wishlist API QA Professional Suite.postman_collection.json # Готовая коллекция Postman (переменные внутри)
 └── soapui/
 └── wishlist-soapui-project.xml # Проект SoapUI
-'''
+```
 ## 4. Как запустить тесты (Инструкция)
 
 ### 4.1. В Postman
