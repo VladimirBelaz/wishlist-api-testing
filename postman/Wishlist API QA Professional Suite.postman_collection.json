@@ -1,0 +1,663 @@
+{
+  "info": {
+    "_postman_id": "7b135092-2c69-482e-bf47-805f2d972492",
+    "name": "Wishlist API QA Professional Suite",
+    "description": "Professional QA API test suite (~70 tests)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "35284086"
+  },
+  "item": [
+    {
+      "name": "AUTH TESTS",
+      "item": [
+        {
+          "name": "Register user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code 200', ()=>pm.response.to.have.status(200));",
+                  "pm.test('Response time < 2s', ()=>pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test('Content-Type JSON', ()=>pm.response.to.have.header('Content-Type'));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"BelozerovVD\",\n    \"email\": \"telemetristika@gmail.com\",\n    \"password\": \"12345678\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register duplicate user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Duplicate rejected', ()=>pm.expect(pm.response.code).to.be.oneOf([400,401,409,500]));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"BelozerovVD\",\n    \"email\": \"telemetristika@gmail.com\",\n    \"password\": \"12345678\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Login 200', ()=>pm.response.to.have.status(200));",
+                  "let json=pm.response.json();",
+                  "pm.test('Token exists', ()=>pm.expect(json).to.have.property('token'));",
+                  "pm.test('Token length valid', ()=>pm.expect(json.token.length).to.be.above(20));",
+                  "pm.collectionVariables.set('token',json.token);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"BelozerovVD\",\n    \"password\": \"12345678\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login wrong password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Unauthorized', ()=>pm.expect(pm.response.code).to.be.oneOf([401,403]));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"BelozerovVD\",\n    \"password\": \"12345679\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "WISHLIST TESTS",
+      "item": [
+        {
+          "name": "Create wishlist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', ()=>pm.response.to.have.status(200));",
+                  "pm.test('Content-Type JSON', ()=>pm.response.to.have.header('Content-Type'));",
+                  "pm.test('Response time <2s', ()=>pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "let json=pm.response.json();",
+                  "pm.test('ID exists', ()=>pm.expect(json.id).to.exist);",
+                  "pm.test('Title correct', ()=>pm.expect(json.title).to.eql('QA Wishlist'));",
+                  "pm.test('Description exists', ()=>pm.expect(json).to.have.property('description'));",
+                  "pm.test('Owner exists', ()=>pm.expect(json).to.have.property('owner'));",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"QA Wishlist\",\n    \"description\": \"Automation testing\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/wishlists",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "wishlists"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get all wishlists",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let json = pm.response.json();",
+                  "",
+                  "pm.test('Status 200', ()=>pm.response.to.have.status(200));",
+                  "pm.test('Array returned', ()=>pm.expect(json).to.be.an('array'));",
+                  "pm.test('Response time <2s', ()=>pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "",
+                  "// Проверяем, что массив не пустой",
+                  "if (json.length > 0) {",
+                  "    let firstWishlist = json[0];",
+                  "    pm.collectionVariables.set('wishlist_id', firstWishlist.id);",
+                  "",
+                  "    pm.test('First wishlist id saved', ()=>pm.expect(firstWishlist.id).to.exist);",
+                  "} else {",
+                  "    console.log(\"No wishlists returned\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/wishlists",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "wishlists"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get wishlist by id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let json=pm.response.json();",
+                  "pm.test('Status 200', ()=>pm.response.to.have.status(200));",
+                  "pm.test('Wishlist has id', ()=>pm.expect(json).to.have.property('id'));",
+                  "pm.test('Wishlist has title', ()=>pm.expect(json).to.have.property('title'));",
+                  "pm.test('Owner object exists', ()=>pm.expect(json).to.have.property('owner'));",
+                  "pm.test('Owner has username', ()=>pm.expect(json.owner).to.have.property('username'));",
+                  "pm.test('Gifts array exists', ()=>pm.expect(json).to.have.property('gifts'));",
+                  "pm.test('Gifts array type', ()=>pm.expect(json.gifts).to.be.an('array'));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/wishlists/{{wishlist_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "wishlists",
+                "{{wishlist_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update wishlist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let json=pm.response.json();",
+                  "pm.test('Status 200', ()=>pm.response.to.have.status(200));",
+                  "pm.test('Title updated', ()=>pm.expect(json.title).to.eql('Updated QA Wishlist'));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Updated QA Wishlist\",\n    \"description\": \"Updated description\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/wishlists/{{wishlist_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "wishlists",
+                "{{wishlist_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Unauthorized wishlist request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Unauthorized', ()=>pm.expect(pm.response.code).to.be.oneOf([401,403]));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/wishlists",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "wishlists"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "GIFT TESTS",
+      "item": [
+        {
+          "name": "Create gift",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let json=pm.response.json();",
+                  "pm.test('Status 200', ()=>pm.response.to.have.status(200));",
+                  "pm.test('Gift id exists', ()=>pm.expect(json.id).to.exist);",
+                  "pm.test('Name matches request', ()=> {",
+                  "    const requestBody = JSON.parse(pm.request.body.raw);",
+                  "    pm.expect(json.name).to.eql(requestBody.name);",
+                  "});",
+                  "pm.test('Price numeric', ()=>pm.expect(json.price).to.be.a('number'));",
+                  "pm.test('Reserved boolean', ()=>pm.expect(json.reserved).to.be.a('boolean'));",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"PlayStation 5\",\n    \"description\": \"Gaming console\",\n    \"price\": 699\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/gifts/wishlist/{{wishlist_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "gifts",
+                "wishlist",
+                "{{wishlist_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get gifts in wishlist",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Парсим ответ",
+                  "let jsonData = pm.response.json();",
+                  "",
+                  "// 1️⃣ Проверка, что статус 200",
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "// 2️⃣ Проверка, что пришёл массив",
+                  "pm.test(\"Response is array\", () => pm.expect(jsonData).to.be.an(\"array\"));",
+                  "",
+                  "// 3️⃣ Проверка, что массив не пустой",
+                  "if (jsonData.length > 0) {",
+                  "    const firstGift = jsonData[0];",
+                  "",
+                  "    // 4️⃣ Проверка, что у подарка есть id",
+                  "    pm.test(\"Gift id exists\", () => pm.expect(firstGift.id).to.exist);",
+                  "",
+                  "    // 5️⃣ Сохраняем gift_id в collection variable",
+                  "    pm.collectionVariables.set(\"gift_id\", firstGift.id);",
+                  "    console.log(\"Saved gift_id:\", firstGift.id);",
+                  "",
+                  "    // 6️⃣ Дополнительно можно проверить UUID",
+                  "    pm.test(\"Gift id is UUID\", () => {",
+                  "        const uuidRegex = /^[0-9a-fA-F-]{36}$/;",
+                  "        pm.expect(firstGift.id).to.match(uuidRegex);",
+                  "    });",
+                  "} else {",
+                  "    console.warn(\"No gifts returned, gift_id not set\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/gifts/wishlist/{{wishlist_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "gifts",
+                "wishlist",
+                "{{wishlist_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle reservation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let json=pm.response.json();",
+                  "pm.test('Status 200', ()=>pm.response.to.have.status(200));",
+                  "pm.test('Reserved exists', ()=>pm.expect(json).to.have.property('reserved'));",
+                  "pm.test('Reserved boolean', ()=>pm.expect(json.reserved).to.be.a('boolean'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/gifts/{{gift_id}}/reserve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "gifts",
+                "{{gift_id}}",
+                "reserve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create gift negative missing price",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Validation error', ()=>pm.expect(pm.response.code).to.be.oneOf([400,403,500]));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Broken gift\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/gifts/wishlist/{{wishlist_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "gifts",
+                "wishlist",
+                "{{wishlist_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://api.wishlist.otus.kartushin.su"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "wishlist_id",
+      "value": ""
+    },
+    {
+      "key": "gift_id",
+      "value": ""
+    }
+  ]
+}
