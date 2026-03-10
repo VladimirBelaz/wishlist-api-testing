@@ -13,7 +13,7 @@
 wishlist-api-tests/
 ├── README.md # Этот файл: тест-план, инструкции и отчет
 ├── postman/
-│ └── Wishlist API QA Professional Suite.postman_collection.json # Готовая коллекция Postman (переменные уже внутри)
+│ └── Wishlist API QA Professional Suite.postman_collection.json # Готовая коллекция Postman (переменные внутри)
 └── soapui/
 └── wishlist-soapui-project.xml # Проект SoapUI
 
